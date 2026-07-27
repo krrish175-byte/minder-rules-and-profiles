@@ -1,6 +1,3 @@
-ENTITY = {"type": "repository", "default_branch": "main"}
-MOCK_FS = {"README": read_file("enforce_file.testdata/file_present/README")}
-
 def PASS(res):
     assert.eq(res["status"], "pass")
 
@@ -8,56 +5,32 @@ def FAIL(res):
     assert.true(res["status"] in ("fail", "error"))
     assert.true(res["message"] != "")
 
-def test_file_should_be_present():
-    res = eval(
+def enforce_file(content, fs):
+    return eval(
         rule="enforce_file",
-        entity=ENTITY,
-        profile={"file": "README", "content": ""},
-        mock_fs=MOCK_FS
+        entity={"type": "repository", "default_branch": "main"},
+        profile={"file": "README", "content": content},
+        mock_fs=fs
     )
-    PASS(res)
+
+file_present = {
+    "README": read_file("enforce_file.testdata/file_present/README")
+}
+
+def test_file_should_be_present():
+    PASS(enforce_file("", file_present))
 
 def test_file_is_missing():
-    res = eval(
-        rule="enforce_file",
-        entity=ENTITY,
-        profile={"file": "README"},
-        mock_fs={}
-    )
-    FAIL(res)
+    FAIL(enforce_file("", {}))
 
 def test_file_present_and_matches_content():
-    res = eval(
-        rule="enforce_file",
-        entity=ENTITY,
-        profile={"file": "README", "content": "Test content"},
-        mock_fs=MOCK_FS
-    )
-    PASS(res)
+    PASS(enforce_file("Test content", file_present))
 
 def test_file_present_but_has_different_content():
-    res = eval(
-        rule="enforce_file",
-        entity=ENTITY,
-        profile={"file": "README", "content": "Different content"},
-        mock_fs=MOCK_FS
-    )
-    FAIL(res)
+    FAIL(enforce_file("Different content", file_present))
 
 def test_file_present_but_has_more_content_than_expected():
-    res = eval(
-        rule="enforce_file",
-        entity=ENTITY,
-        profile={"file": "README", "content": "Test"},
-        mock_fs=MOCK_FS
-    )
-    FAIL(res)
+    FAIL(enforce_file("Test", file_present))
 
 def test_file_present_but_has_less_content_than_expected():
-    res = eval(
-        rule="enforce_file",
-        entity=ENTITY,
-        profile={"file": "README", "content": "Test content with a subset"},
-        mock_fs=MOCK_FS
-    )
-    FAIL(res)
+    FAIL(enforce_file("Test content with a subset", file_present))

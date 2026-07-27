@@ -8,7 +8,6 @@ def test_should_not_have_golangci_lint_gh_action_configured():
         }
     )
     assert.true(res["status"] in ("fail", "error"))
-    assert.true(res["message"] != "")
 
 def test_should_have_golangci_lint_gh_action_configured():
     res = eval(

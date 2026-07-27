@@ -14,35 +14,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
 
-      - name: Set up Go
-        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v5
+      - name: Run tests
+        uses: mindersec/minder-action/test@main
         with:
-          go-version-file: 'go.mod'
-          check-latest: true
-
-      - name: Checkout minder
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
-        with:
-          # TODO: Switch back to mindersec/minder once the testing framework
-          # changes (project context fix) are merged upstream.
-          repository: krrish175-byte/minder
-          path: minder
-
-      - name: Build mindev
-        run: |
-          cd minder
-          go build -o ../mindev ./cmd/dev
-          cd ..
-          echo "$(pwd)" >> $GITHUB_PATH
-
-      - name: setup task
-        uses: arduino/setup-task@c0bc642852239c2689f73f4ea6459c29405f3c52 # v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run go mod download
-        run: go mod download
-
-      - name: build
-        run: |-
-          task test
+          minder_version: v0.2.2
+          rules_directory: rule-types

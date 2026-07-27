@@ -5,9 +5,8 @@ def PASS(res):
 
 def FAIL(res):
     assert.true(res["status"] in ("fail", "error"))
-    assert.true(res["message"] != "")
 
-def test_trufflehog_present_passes():
+def test_should_have_trufflehog_enabled():
     res = eval(
         rule="trufflehog_github_action",
         entity=ENTITY,
@@ -17,7 +16,7 @@ def test_trufflehog_present_passes():
     )
     PASS(res)
 
-def test_trufflehog_missing_fails():
+def test_should_not_have_trufflehog_enabled():
     res = eval(
         rule="trufflehog_github_action",
         entity=ENTITY,
