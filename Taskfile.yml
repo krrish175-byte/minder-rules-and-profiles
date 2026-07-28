@@ -30,4 +30,4 @@ tasks:
       
       You must have `mindev` installed and available in your PATH to run tests.
     cmds:
-      - mindev test rule-types/**/*_test.star
+      - mindev test rule-types

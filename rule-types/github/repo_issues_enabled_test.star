@@ -7,25 +7,21 @@ def PASS(res):
 def FAIL(res):
     assert.true(res["status"] in ("fail", "error"))
 
-def test_issues_are_enabled():
-    res = eval(
+def repo_issues(has_issues):
+    """Helper to build eval result for repo_issues_enabled rule."""
+    return eval(
         rule="repo_issues_enabled",
         entity=ENTITY,
         mock_http={
-            URL: body('{"has_issues": true}')
+            URL: body('{"has_issues": %s}' % ("true" if has_issues else "false"))
         }
     )
-    PASS(res)
+
+def test_issues_are_enabled():
+    PASS(repo_issues(True))
 
 def test_issues_should_be_enabled():
-    res = eval(
-        rule="repo_issues_enabled",
-        entity=ENTITY,
-        mock_http={
-            URL: body('{"has_issues": false}')
-        }
-    )
-    FAIL(res)
+    FAIL(repo_issues(False))
 
 def test_not_found_should_fail():
     res = eval(
