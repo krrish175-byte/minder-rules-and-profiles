@@ -18,7 +18,7 @@ jobs:
         uses: mindersec/minder-action/test@v1.1.0
         id: run-tests
         with:
-          minder_version: v0.2.2
+          minder_version: v0.3.0
           rules_directory: rule-types
 
       - name: Publish Test Report
