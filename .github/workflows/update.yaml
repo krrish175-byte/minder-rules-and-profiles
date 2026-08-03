@@ -22,11 +22,11 @@ jobs:
         ref: main
         path: before_files
 
-    - name: Set up Go
-      uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v5
-      with:
-        go-version-file: 'go.mod'
-        check-latest: true
+    - name: Install cosign
+      uses: sigstore/cosign-installer@v3.6.0
+
+    - name: Install Minder CLI
+      uses: mindersec/minder-client-installer@430dc4a6f07d6645288b5812fe9b780117963cf2 # v1.1.2
 
     - name: Determine Changed Files
       id: changes
@@ -57,8 +57,6 @@ jobs:
         # Fail the script if any command fails
         set -e
 
-        go install github.com/mindersec/minder/cmd/dev@latest
-        
         # Loop through the changed files and run the go command for each
         echo "$CHANGED_FILES" | while read FILE; do
           echo "Processing file: $FILE"
@@ -72,10 +70,10 @@ jobs:
           BEFORE_FILE="before_files/$FILE"
           AFTER_FILE="$FILE"
 
-          if [ -f "$BEFORE_FILE" ] && [ grep "type: rule-type" "$BEFORE_FILE" ]; then
+          if [ -f "$BEFORE_FILE" ] && grep -q "type: rule-type" "$BEFORE_FILE"; then
             echo "Running ruletype validate-update command for $BEFORE_FILE and $AFTER_FILE..."
             # Run the go command with the before and after files
-            dev ruletype validate-update --before "$BEFORE_FILE" --after "$AFTER_FILE"
+            mindev ruletype validate-update --before "$BEFORE_FILE" --after "$AFTER_FILE"
           else
             echo "Warning: $BEFORE_FILE does not exist, skipping."
           fi
