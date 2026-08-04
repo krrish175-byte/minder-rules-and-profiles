@@ -23,7 +23,7 @@ jobs:
         path: before_files
 
     - name: Install cosign
-      uses: sigstore/cosign-installer@v3.6.0
+      uses: sigstore/cosign-installer@v4.1.2
 
     - name: Install Minder CLI
       uses: mindersec/minder-client-installer@430dc4a6f07d6645288b5812fe9b780117963cf2 # v1.1.2
